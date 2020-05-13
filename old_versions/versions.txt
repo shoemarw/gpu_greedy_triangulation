@@ -1,0 +1,24 @@
+The version par_greedy_triangle20200425-2105.cu is prior to trying to parallelize the triangulation step. The device code has been tested and appears to function properly (running serially) with one thread and one block.
+
+The version par_greedy_triangle20200427-1058.cu is multi-threaded and runs on only one block. It produces correct triangulations. This version has runtime statistics in "runTimeResults00.ods"
+
+The next version has max and min device functions using the ternary operator instead of max and min functions provided by library (c or nvcc?). This version improved the runtime of a triangulation. The runtime statistics are labeled in "runTimeResults00.ods".
+
+A further improvement has been added. The branch in d_intersects has been replaced with a single return statement. Now d_intersects contains 0 branches. Now the only device code with branching is the __global__ triangulate function. This made no improvements in terms of runtime with respect to the previous implementation. The rutime statistics are recorded in "runTimeResults00.ods".
+
+The previous optimizations were archived in the version "par_greedy_triangle20200428-0955.cu"
+
+Inside the for loop where threads replace bad lines with empty lines: a break statement was added to reduce unnecessary iterations. If the number of the iterator is greater than the number of lines we break out of the for loop. Code was also produced to eliminate the empty lines in the while loop after the for loop inside completes. This elimination process only happens on one thread. This did not achieve speed up, it actually slowed things down significantly! For example when run on test500pts23 the runtime was: Gent: 0.0120  Sort: 0.0376  Tria: 1031.9978 wheras in the serial version we get Gent: 0.0156  Sort: 0.0339  Tria: 3.1180. This version is archived as "par_greedy_triangle20200428-1759.cu"
+
+The archived version "par_greedy_triangle20200428-2004.cu" was work done to improve upon "par_greedy_triangle20200428-1759.cu" where an attempt was made to parallelize the array copying (which removes the 'empty lines') which occurs on thread 0. It appears that this is not possible. One issue is the order of the array will not be preserved. A possible fix is using memory locks on the array but I dont think this will work either... The current working version will be a copy of "par_greedy_triangle20200428-0955.cu" which is prior to any attempts to remove 'empty' lines during the building of the triangulation.
+
+The version 'par_greedy_triangle20200504-1200.cu' is prior to trying to use multiple blocks and maximum memory coalesce.
+
+The version 'par_greedy_triangle20200505-1100.cu' uses multiple blocks and maximum memory coalesce. It achieves results slightly better than the MPI version from 2019. This version uses kernel launches to synchronize blocks. The host keeps track of the smallest line. When running the profiler using:
+nvprof ./par test2828pts93 128 1024
+The bulk of the time appears to be CUDA memcpy Device to Host with 24674 calls that average 1.2891ms for an estimated total time of 31.8063 seconds. The entire triangluation phase took 39.1016 seconds total. Further effort should be made so data transfers from gpu to host only happens after the triangulation step is completed.
+
+The version 'par_greedy_triangle20200510-2035.cu' is faster than the previous version. It has the gpu keep track of the smallest line via the kernel function find_new_small. This eliminates the overhead due to device to host memcpy stated in the previous entry. The device only copies an int representing the smallest line to the host during every round. memcpy DtoH and HtoD are roughly equal at 19 ms when using:
+nvprof ./par test2828pts93 128 1024
+Now the bulk of time is 4 seconds on the device function triangulation. find_new_small only takes 681.92 ms.
+
