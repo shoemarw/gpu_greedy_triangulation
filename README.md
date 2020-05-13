@@ -2,7 +2,7 @@
 
 run make to generate all executables.
 
-run ./gen <number of points> <seed> to generate an input file for our triangulaiton algorithms. The file will contain the specified number of points and use a pseudorandom number generator with the specified seed to generate the coordinates.
+run ./gen *number of points* *seed* to generate an input file for our triangulaiton algorithms. The file will contain the specified number of points and use a pseudorandom number generator with the specified seed to generate the coordinates.
 
 run ./tri <filename of file made by gen> to triangulate a point set with the serial algorithm. This will produce a file containing the triangulation and another bmp file containing an image of the triangulation.
 
