@@ -7,3 +7,5 @@ run ./gen <number of points> <seed> to generate an input file for our triangulai
 run ./tri <filename of file made by gen> to triangulate a point set with the serial algorithm.
 
 run ./par <filename of file made by gen> <number of blocks> <number of threads per block> to triangulate a point set with our GPU implementation. Uses the specified number of blocks and threads per block.
+
+use bash to run experiments.sh to reproduce our results.
