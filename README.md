@@ -1,5 +1,7 @@
 # gpu_greedy_triangulation
 
+GNU General Public License v3.0
+
 run make to generate all executables.
 
 run ./gen -(number of points)- -(seed)- to generate an input file for our triangulaiton algorithms. The file will contain the specified number of points and use a pseudorandom number generator with the specified seed to generate the coordinates.
